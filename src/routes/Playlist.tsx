@@ -2,6 +2,9 @@ import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import api from "../api";
+import AudioPlayer from "../components/AudioPlayer";
+import Track from "../components/Track";
+import Tracklist from "../components/Tracklist";
 import { RootState } from "../store/store";
 
 function Playlist() {
@@ -33,20 +36,17 @@ function Playlist() {
   function renderTracks() {
     return (
       <div>
-        {tracks.map((track) => {
-          return (
-            <div className="flex" key={track?.id}>
-              <span>{track?.name}</span>
-            </div>
-          );
-        })}
+        <Tracklist tracks={tracks} />
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col w-full h-full">
+    <div className="flex flex-col w-full h-full items-center">
       {isLoading ? renderLoadingState() : renderTracks()}
+      <div className="absolute bottom-0">
+        <AudioPlayer />
+      </div>
     </div>
   );
 }

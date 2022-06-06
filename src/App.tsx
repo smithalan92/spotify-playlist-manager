@@ -15,7 +15,7 @@ function App() {
     if (!isAuthed && !["/login", "/verify"].includes(location.pathname)) {
       navigate("/login");
     } else if (location.pathname === "/") {
-      navigate("/home");
+      navigate("/playlists");
     }
   }, [location]);
 

@@ -1,9 +1,25 @@
 /// <reference types="spotify-api" />
 
-import axios from "axios";
+import Axios, { AxiosError } from "axios";
 import { API_URL, SPOTIFY_API_URL } from "./constants";
 import { store } from "./store/store";
-import { Playlist, User } from "./types";
+import { setToken } from "./store/slices/auth";
+import { User } from "./types";
+
+const axios = Axios.create();
+
+axios.interceptors.response.use(
+  (response) => {
+    return response;
+  },
+  function (error: AxiosError) {
+    if (error.response?.status === 401) {
+      store.dispatch(setToken(""));
+      window.location.href = "/login";
+    }
+    return Promise.reject(error);
+  }
+);
 
 const getAuthHeader = () => {
   const state = store.getState();

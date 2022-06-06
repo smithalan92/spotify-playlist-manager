@@ -2,6 +2,7 @@ import { configureStore } from "@reduxjs/toolkit";
 import { save, load } from "redux-localstorage-simple";
 import authReducer from "./slices/auth";
 import playlistReducer from "./slices/playlist";
+import audioReducer from "./slices/audio";
 
 // TODO - Dont save/load playlists to localstorage
 
@@ -9,6 +10,7 @@ export const store = configureStore({
   reducer: {
     auth: authReducer,
     playlist: playlistReducer,
+    audio: audioReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(

@@ -17,11 +17,12 @@ function Verify() {
   // TODO handle code & state missing
 
   useEffect(() => {
+    console.log("here");
     const getToken = async () => {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       const token = await api.getToken(code!);
       dispatch(setToken(token));
-      navigate("/home");
+      navigate("/playlists");
     };
     getToken();
   }, []);
