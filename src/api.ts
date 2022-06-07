@@ -123,9 +123,45 @@ async function getPlaylistTracks(
   return tracks;
 }
 
+async function updatePlaylistTrackPosition({
+  playlistId,
+  currentPosition,
+  newPosition,
+  snapshotId,
+}: {
+  playlistId: string;
+  currentPosition: number;
+  newPosition: number;
+  snapshotId: string | undefined;
+}) {
+  const auth = getAuthHeader();
+
+  const payload: {
+    range_start: number;
+    insert_before: number;
+    snapshot_id?: string;
+  } = {
+    range_start: currentPosition,
+    insert_before: newPosition,
+  };
+
+  if (snapshotId) {
+    payload["snapshot_id"] = snapshotId;
+  }
+
+  const { data } = await axios.put(
+    `${SPOTIFY_API_URL}playlists/${playlistId}/tracks`,
+    payload,
+    { headers: { ...auth } }
+  );
+
+  return data.snapshot_id;
+}
+
 export default {
   getToken,
   getPlaylists,
   getUserProfile,
   getPlaylistTracks,
+  updatePlaylistTrackPosition,
 };

@@ -7,7 +7,7 @@ import AudioPlayer from "../components/AudioPlayer";
 import TabbedTrackLists from "../components/TabbedTrackLists";
 import Tracklist from "../components/Tracklist";
 import { RootState } from "../store/store";
-import { shuffleArray } from "../utils";
+import { saveShuffledPlaylist, shuffleArray } from "../utils";
 
 function Playlist() {
   const navigate = useNavigate();
@@ -40,11 +40,17 @@ function Playlist() {
     loadTracks();
   }, []);
 
-  function shuffleTracks() {
+  const shuffleTracks = () => {
     setShuffledTracks(
       shuffleArray<SpotifyApi.TrackObjectFull | null>(shuffledTracks)
     );
-  }
+  };
+
+  const onClickSave = async () => {
+    const originalOrder = originalTracks!.map((track) => track!.uri);
+    const shuffledOrder = shuffledTracks!.map((track) => track!.uri);
+    await saveShuffledPlaylist(originalOrder, shuffledOrder, playlist!.id);
+  };
 
   function goToPlaylists() {
     navigate("/playlists");
@@ -100,7 +106,10 @@ function Playlist() {
         >
           Shuffle
         </button>
-        <button className="ml-2 inline-block px-12 py-3 text-sm font-medium text-white bg-green-600 border border-green-600 rounded active:text-green-500 hover:bg-transparent hover:text-green-600 focus:outline-none focus:ring">
+        <button
+          className="ml-2 inline-block px-12 py-3 text-sm font-medium text-white bg-green-600 border border-green-600 rounded active:text-green-500 hover:bg-transparent hover:text-green-600 focus:outline-none focus:ring"
+          onClick={onClickSave}
+        >
           Save
         </button>
       </div>
