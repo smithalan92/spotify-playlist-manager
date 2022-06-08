@@ -1,4 +1,10 @@
+import axios from "axios";
+
 import api from "./api";
+
+function delay(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
 
 export function shuffleArray<T>(items: Array<T>): Array<T> {
   const itemsCopy = [...items];
@@ -37,15 +43,28 @@ export async function saveShuffledPlaylist(
     );
     if (currentTrackIndex === index) continue;
 
-    const delay = (ms: number) =>
-      new Promise((resolve) => setTimeout(resolve, ms));
-    await delay(500);
-    currentSnapshotId = await api.updatePlaylistTrackPosition({
-      playlistId,
-      currentPosition: currentTrackIndex,
-      newPosition: index === shuffledList.length ? index + 1 : index,
-      snapshotId: currentSnapshotId,
-    });
+    const makeApiCall = async (): Promise<string> => {
+      return api.updatePlaylistTrackPosition({
+        playlistId,
+        currentPosition: currentTrackIndex,
+        newPosition: index === shuffledList.length ? index + 1 : index,
+        snapshotId: currentSnapshotId,
+      });
+    };
+
+    try {
+      currentSnapshotId = await makeApiCall();
+    } catch (err) {
+      if (axios.isAxiosError(err)) {
+        if (err.response?.status === 429) {
+          const timeout =
+            parseInt(err.response.headers["Retry-After"], 10) ?? 5;
+          console.log("Backoff timeout");
+          await delay(timeout * 1000);
+          await makeApiCall();
+        }
+      }
+    }
 
     currentOrder.splice(currentTrackIndex, 1);
     currentOrder.splice(index, 0, shuffledList[index]);
