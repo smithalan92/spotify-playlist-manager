@@ -1,9 +1,10 @@
 /// <reference types="spotify-api" />
 
 import Axios, { AxiosError } from "axios";
+
 import { API_URL, SPOTIFY_API_URL } from "./constants";
-import { store } from "./store/store";
 import { setToken } from "./store/slices/auth";
+import { store } from "./store/store";
 import { User } from "./types";
 
 const axios = Axios.create();

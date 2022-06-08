@@ -1,9 +1,10 @@
-import { useNavigate, useSearchParams } from "react-router-dom";
-import { useSelector, useDispatch } from "react-redux";
-import { RootState } from "../store/store";
-import { setToken } from "../store/slices/auth";
 import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate, useSearchParams } from "react-router-dom";
+
 import api from "../api";
+import { setToken } from "../store/slices/auth";
+import { RootState } from "../store/store";
 
 function Verify() {
   const [searchParams] = useSearchParams();

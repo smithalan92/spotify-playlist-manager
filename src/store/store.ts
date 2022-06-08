@@ -1,8 +1,9 @@
 import { configureStore } from "@reduxjs/toolkit";
-import { save, load } from "redux-localstorage-simple";
+import { load, save } from "redux-localstorage-simple";
+
+import audioReducer from "./slices/audio";
 import authReducer from "./slices/auth";
 import playlistReducer from "./slices/playlist";
-import audioReducer from "./slices/audio";
 
 // TODO - Dont save/load playlists to localstorage
 

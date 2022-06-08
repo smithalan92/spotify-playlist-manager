@@ -1,8 +1,9 @@
 import { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
-import { RootState } from "./store/store";
+
 import { ReactComponent as AppIcon } from "./assets/app-icon.svg";
+import { RootState } from "./store/store";
 
 function App() {
   const location = useLocation();

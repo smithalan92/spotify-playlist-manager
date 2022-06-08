@@ -1,9 +1,10 @@
-import { useSelector, useDispatch } from "react-redux";
-import { AppDispatch, RootState } from "../store/store";
-import { fetchPlaylists, setLoading } from "../store/slices/playlist";
-import { fetchUser } from "../store/slices/auth";
 import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+
 import PlaylistTable from "../components/PlaylistTable";
+import { fetchUser } from "../store/slices/auth";
+import { fetchPlaylists, setLoading } from "../store/slices/playlist";
+import { AppDispatch, RootState } from "../store/store";
 
 function Home() {
   const dispatch = useDispatch<AppDispatch>();

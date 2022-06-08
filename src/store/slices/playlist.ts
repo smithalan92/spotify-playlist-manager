@@ -1,6 +1,7 @@
-import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
-import { Playlist, User } from "../../types";
+import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+
 import api from "../../api";
+import { Playlist, User } from "../../types";
 
 interface PlaylistState {
   playlists: Array<Playlist>;

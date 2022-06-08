@@ -1,8 +1,9 @@
 import { useEffect, useRef } from "react";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
-import { RootState } from "../store/store";
+
 import { setAudio } from "../store/slices/audio";
+import { RootState } from "../store/store";
 
 // TODO - Figure out what to do when track finishes playing
 function AudioPlayer() {

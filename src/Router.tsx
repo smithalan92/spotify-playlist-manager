@@ -1,8 +1,9 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+
 import App from "./App";
-import Playlists from "./routes/Playlists";
 import Login from "./routes/Login";
 import Playlist from "./routes/Playlist";
+import Playlists from "./routes/Playlists";
 import Verify from "./routes/Verify";
 
 function Router() {

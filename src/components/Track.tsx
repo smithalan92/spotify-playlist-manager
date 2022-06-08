@@ -1,8 +1,9 @@
 import { useDispatch, useSelector } from "react-redux";
+
+import { ReactComponent as PauseIcon } from "../assets/pause-icon.svg";
+import { ReactComponent as PlayIcon } from "../assets/play-icon.svg";
 import { setAudio } from "../store/slices/audio";
 import { RootState } from "../store/store";
-import { ReactComponent as PlayIcon } from "../assets/play-icon.svg";
-import { ReactComponent as PauseIcon } from "../assets/pause-icon.svg";
 
 interface Props {
   track: SpotifyApi.TrackObjectFull;

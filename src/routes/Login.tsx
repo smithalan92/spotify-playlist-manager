@@ -1,9 +1,10 @@
 /// <reference types="vite-plugin-svgr/client" />
 import { useDispatch } from "react-redux";
 import * as uuid from "uuid";
-import { setStateKey } from "../store/slices/auth";
+
 import { ReactComponent as SpotifyLogo } from "../assets/spotify-logo.svg";
 import { API_URL } from "../constants";
+import { setStateKey } from "../store/slices/auth";
 
 function Login() {
   const dispatch = useDispatch();
