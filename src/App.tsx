@@ -1,16 +1,14 @@
 import { useEffect } from "react";
-import { useSelector } from "react-redux";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 
 import { ReactComponent as AppIcon } from "./assets/app-icon.svg";
-import { RootState } from "./store/store";
+import { useAppSelector } from "./store/store";
+import { selectIsAuthed } from "./store/slices/auth";
 
 function App() {
   const location = useLocation();
   const navigate = useNavigate();
-  const isAuthed = useSelector(
-    (state: RootState) => state.auth.token.length > 0
-  );
+  const isAuthed = useAppSelector(selectIsAuthed);
 
   useEffect(() => {
     if (!isAuthed && !["/login", "/verify"].includes(location.pathname)) {

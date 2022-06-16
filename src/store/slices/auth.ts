@@ -2,6 +2,7 @@ import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
 import api from "../../api";
 import { User } from "../../types";
+import { RootState } from "../store";
 
 interface AuthState {
   user: User | null;
@@ -45,6 +46,8 @@ export const authSlice = createSlice({
     );
   },
 });
+
+export const selectIsAuthed = (state: RootState) => state.auth.token.length > 0;
 
 export const { setUser, setToken, setStateKey } = authSlice.actions;
 

@@ -5,6 +5,7 @@ import PlaylistTable from "../components/PlaylistTable";
 import { fetchUser } from "../store/slices/auth";
 import { fetchPlaylists, setLoading } from "../store/slices/playlist";
 import { AppDispatch, RootState } from "../store/store";
+import { ReactComponent as Spinner } from "../assets/spinner.svg";
 
 function Home() {
   const dispatch = useDispatch<AppDispatch>();
@@ -12,6 +13,7 @@ function Home() {
   const playlists = useSelector((state: RootState) => state.playlist.playlists);
 
   useEffect(() => {
+    // TODO - Always update playlists
     if (!playlists.length) {
       dispatch(fetchUser()).then(() => {
         dispatch(fetchPlaylists());
@@ -22,7 +24,11 @@ function Home() {
   }, []);
 
   const renderLoadingState = () => {
-    return <div>Loading...</div>;
+    return (
+      <div className="w-full h-full flex justify-center items-center">
+        <Spinner className="w-16 stroke-spotify-green" />
+      </div>
+    );
   };
 
   const renderPlaylists = () => {
@@ -33,7 +39,11 @@ function Home() {
     );
   };
 
-  return <div>{isLoading ? renderLoadingState() : renderPlaylists()}</div>;
+  return (
+    <div className="w-full h-full">
+      {isLoading ? renderLoadingState() : renderPlaylists()}
+    </div>
+  );
 }
 
 export default Home;

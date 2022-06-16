@@ -9,6 +9,7 @@ import TabbedTrackLists from "../components/TabbedTrackLists";
 import Tracklist from "../components/Tracklist";
 import { RootState } from "../store/store";
 import { saveShuffledPlaylist, shuffleArray } from "../utils";
+import { ReactComponent as Spinner } from "../assets/spinner.svg";
 
 function Playlist() {
   const navigate = useNavigate();
@@ -58,7 +59,11 @@ function Playlist() {
   }
 
   function renderLoadingState() {
-    return <span className="font-bold text-xl">Loading...</span>;
+    return (
+      <div className="w-full h-full flex justify-center items-center">
+        <Spinner className="w-16 stroke-spotify-green" />
+      </div>
+    );
   }
 
   function renderSideBySideTracks() {
@@ -85,35 +90,38 @@ function Playlist() {
     );
   }
 
-  function renderTracks() {
-    if (width > 825) return renderSideBySideTracks();
-    return renderTabbedTracks();
+  function renderPage() {
+    return (
+      <div>
+        {width > 825 ? renderSideBySideTracks() : renderTabbedTracks()}
+        <div className="flex justify-center mt-8">
+          <button
+            className="inline-block px-12 py-3 text-sm font-medium text-white bg-green-600 border border-green-600 rounded active:text-green-500 hover:bg-transparent hover:text-green-600 focus:outline-none focus:ring"
+            onClick={goToPlaylists}
+          >
+            Back
+          </button>
+          <button
+            className="ml-2 inline-block px-12 py-3 text-sm font-medium text-white bg-green-600 border border-green-600 rounded active:text-green-500 hover:bg-transparent hover:text-green-600 focus:outline-none focus:ring"
+            onClick={shuffleTracks}
+          >
+            Shuffle
+          </button>
+          <button
+            className="ml-2 inline-block px-12 py-3 text-sm font-medium text-white bg-green-600 border border-green-600 rounded active:text-green-500 hover:bg-transparent hover:text-green-600 focus:outline-none focus:ring"
+            onClick={onClickSave}
+          >
+            Save
+          </button>
+        </div>
+      </div>
+    );
   }
 
   return (
     <div className="flex flex-col w-full h-full items-center">
       <span className="font-bold text-lg">{playlist?.name} Playlist</span>
-      {isLoading ? renderLoadingState() : renderTracks()}
-      <div className="flex justify-center mt-8">
-        <button
-          className="inline-block px-12 py-3 text-sm font-medium text-white bg-green-600 border border-green-600 rounded active:text-green-500 hover:bg-transparent hover:text-green-600 focus:outline-none focus:ring"
-          onClick={goToPlaylists}
-        >
-          Back
-        </button>
-        <button
-          className="ml-2 inline-block px-12 py-3 text-sm font-medium text-white bg-green-600 border border-green-600 rounded active:text-green-500 hover:bg-transparent hover:text-green-600 focus:outline-none focus:ring"
-          onClick={shuffleTracks}
-        >
-          Shuffle
-        </button>
-        <button
-          className="ml-2 inline-block px-12 py-3 text-sm font-medium text-white bg-green-600 border border-green-600 rounded active:text-green-500 hover:bg-transparent hover:text-green-600 focus:outline-none focus:ring"
-          onClick={onClickSave}
-        >
-          Save
-        </button>
-      </div>
+      {isLoading ? renderLoadingState() : renderPage()}
       <div className="absolute bottom-0">
         <AudioPlayer />
       </div>
