@@ -19,7 +19,7 @@ function App() {
   }, [location]);
 
   return (
-    <div className="flex flex-col w-full h-full min-w-100 overflow-hidden bg-gray-100">
+    <div className="flex flex-col w-full h-full min-w-80 overflow-hidden bg-gray-100">
       <div className="w-full flex p-2 items-center justify-center bg-gray-800 border-b-4 border-solid border-gray-900">
         <div className="flex p-2 items-center">
           <span className="text-xl text-center text-white mr-2">

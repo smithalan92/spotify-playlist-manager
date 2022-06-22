@@ -1,10 +1,10 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 
-interface AuthState {
+interface AudioState {
   url: string | null;
 }
 
-const initialState: AuthState = {
+const initialState: AudioState = {
   url: null,
 };
 

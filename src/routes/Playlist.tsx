@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { useWindowSize } from "react-use";
 
@@ -7,12 +7,19 @@ import api from "../api";
 import AudioPlayer from "../components/AudioPlayer";
 import TabbedTrackLists from "../components/TabbedTrackLists";
 import Tracklist from "../components/Tracklist";
-import { RootState } from "../store/store";
+import LoadingOverlay from "../components/LoadingOverlay";
+import { RootState, useAppSelector } from "../store/store";
 import { saveShuffledPlaylist, shuffleArray } from "../utils";
 import { ReactComponent as Spinner } from "../assets/spinner.svg";
+import { setAudio } from "../store/slices/audio";
+import { selectTrackUpdateState } from "../store/slices/tracks";
 
 function Playlist() {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const trackUpdateState = useAppSelector(selectTrackUpdateState);
+
   const { id: playlistId } = useParams<{ id: string }>();
   const playlist = useSelector((state: RootState) => {
     return state.playlist.playlists.find(
@@ -40,6 +47,12 @@ function Playlist() {
       setIsLoading(false);
     };
     loadTracks();
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      dispatch(setAudio(null));
+    };
   }, []);
 
   const shuffleTracks = () => {
@@ -90,25 +103,35 @@ function Playlist() {
     );
   }
 
-  function renderPage() {
+  function renderTrackUpdateView() {
     return (
-      <div>
+      <div className="absolute top-0 left-0 w-full h-full bg-black/40 z-10">
+        <div className="w-full h-full flex flex-col items-center justify-center">
+          <div className="w-100 bg-spotify-green/50">Updating</div>
+        </div>
+      </div>
+    );
+  }
+
+  function renderContent() {
+    return (
+      <div className="flex flex-col items-center">
         {width > 825 ? renderSideBySideTracks() : renderTabbedTracks()}
-        <div className="flex justify-center mt-8">
+        <div className="flex justify-center mt-8 flex-wrap">
           <button
-            className="inline-block px-12 py-3 text-sm font-medium text-white bg-green-600 border border-green-600 rounded active:text-green-500 hover:bg-transparent hover:text-green-600 focus:outline-none focus:ring"
+            className="mt-1 inline-block px-12 py-2 text-sm font-medium text-white bg-green-600 border border-green-600 rounded active:text-green-500 hover:bg-transparent hover:text-green-600 focus:outline-none focus:ring"
             onClick={goToPlaylists}
           >
             Back
           </button>
           <button
-            className="ml-2 inline-block px-12 py-3 text-sm font-medium text-white bg-green-600 border border-green-600 rounded active:text-green-500 hover:bg-transparent hover:text-green-600 focus:outline-none focus:ring"
+            className="mt-1 ml-2 inline-block px-12 py-2 text-sm font-medium text-white bg-green-600 border border-green-600 rounded active:text-green-500 hover:bg-transparent hover:text-green-600 focus:outline-none focus:ring"
             onClick={shuffleTracks}
           >
             Shuffle
           </button>
           <button
-            className="ml-2 inline-block px-12 py-3 text-sm font-medium text-white bg-green-600 border border-green-600 rounded active:text-green-500 hover:bg-transparent hover:text-green-600 focus:outline-none focus:ring"
+            className="mt-1 ml-2 inline-block px-12 py-2 text-sm font-medium text-white bg-green-600 border border-green-600 rounded active:text-green-500 hover:bg-transparent hover:text-green-600 focus:outline-none focus:ring"
             onClick={onClickSave}
           >
             Save
@@ -118,10 +141,20 @@ function Playlist() {
     );
   }
 
+  const maybeRenderLoadingOverlay = () => {
+    if (trackUpdateState.total > 0) {
+      const message = `Shuffled ${trackUpdateState.processed} / ${trackUpdateState.total} tracks`;
+      return <LoadingOverlay message={message} />;
+    }
+    return <></>;
+  };
+
   return (
     <div className="flex flex-col w-full h-full items-center">
+      {maybeRenderLoadingOverlay()}
       <span className="font-bold text-lg">{playlist?.name} Playlist</span>
-      {isLoading ? renderLoadingState() : renderPage()}
+      <span className="text-sm">{originalTracks.length} tracks</span>
+      {isLoading ? renderLoadingState() : renderContent()}
       <div className="absolute bottom-0">
         <AudioPlayer />
       </div>

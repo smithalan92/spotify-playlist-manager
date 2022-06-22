@@ -2,6 +2,7 @@ import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
 import api from "../../api";
 import { Playlist, User } from "../../types";
+import { RootState } from "../store";
 
 interface PlaylistState {
   playlists: Array<Playlist>;
@@ -23,6 +24,7 @@ export const fetchPlaylists = createAsyncThunk(
   async (_, thunkAPI) => {
     const playlists = await api.getPlaylists();
     const state: any = thunkAPI.getState();
+
     return {
       playlists,
       currentUser: state.auth.user,

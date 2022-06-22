@@ -1,6 +1,8 @@
 import axios from "axios";
 
 import api from "./api";
+import { setUpdateState } from "./store/slices/tracks";
+import { store } from "./store/store";
 
 function delay(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -36,12 +38,24 @@ export async function saveShuffledPlaylist(
   // If we used the original array, the order would be wrong after the update
   const currentOrder = [...originalList];
   let currentSnapshotId = "";
+  let processedTracks = 0;
+  const totalTracks = shuffledList.length;
 
   for (let index = 0; index < shuffledList.length; index++) {
     const currentTrackIndex = currentOrder.findIndex(
       (item) => item === shuffledList[index]
     );
-    if (currentTrackIndex === index) continue;
+    if (currentTrackIndex === index) {
+      processedTracks += 1;
+      await store.dispatch(
+        setUpdateState({
+          processed: processedTracks,
+          total: totalTracks,
+        })
+      );
+
+      continue;
+    }
 
     const makeApiCall = async (): Promise<string> => {
       return api.updatePlaylistTrackPosition({
@@ -54,6 +68,13 @@ export async function saveShuffledPlaylist(
 
     try {
       currentSnapshotId = await makeApiCall();
+      processedTracks += 1;
+      await store.dispatch(
+        setUpdateState({
+          processed: processedTracks,
+          total: totalTracks,
+        })
+      );
     } catch (err) {
       if (axios.isAxiosError(err)) {
         if (err.response?.status === 429) {
@@ -69,4 +90,6 @@ export async function saveShuffledPlaylist(
     currentOrder.splice(currentTrackIndex, 1);
     currentOrder.splice(index, 0, shuffledList[index]);
   }
+
+  store.dispatch(setUpdateState(null));
 }

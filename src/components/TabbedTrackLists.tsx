@@ -34,7 +34,7 @@ function TabbedTrackLists(props: Props) {
   };
 
   return (
-    <div className="w-100 mt-4">
+    <div className="w-80 mt-4">
       <ul className="flex text-center border-b border-gray-200 w-full">
         <li className="flex-1">
           <a
@@ -57,7 +57,7 @@ function TabbedTrackLists(props: Props) {
           </a>
         </li>
       </ul>
-      <div className="pt-4 w-full">
+      <div className="w-full bg-white border-solid border-b border-l border-r border-gray-200">
         <Tracklist
           tracks={
             selectedTab === TAB_NAMES.ORIGINAL

@@ -44,9 +44,11 @@ function Track({ track, number }: Props) {
   }
 
   return (
-    <div className="flex items-center px-2 py-1 text-xs w-100">
+    <div className="flex items-center px-2 py-1 text-xs w-full">
       <div className="relative w-11">
-        <img src={track.album.images[0].url} width={44} />
+        <div className="h-11">
+          <img src={track.album.images[0].url} className="w-11" />
+        </div>
         <span className="absolute left-0 bottom-0 w-10 text-white text-xs bg-black/40 w-11">
           #{number}
         </span>

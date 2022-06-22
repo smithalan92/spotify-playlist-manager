@@ -5,6 +5,7 @@ import { load, save } from "redux-localstorage-simple";
 import audioReducer from "./slices/audio";
 import authReducer from "./slices/auth";
 import playlistReducer from "./slices/playlist";
+import tracksReducer from "./slices/tracks";
 
 // TODO - Dont save/load playlists to localstorage
 
@@ -13,6 +14,7 @@ export const store = configureStore({
     auth: authReducer,
     playlist: playlistReducer,
     audio: audioReducer,
+    tracks: tracksReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(
