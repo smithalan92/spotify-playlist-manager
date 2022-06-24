@@ -2,7 +2,6 @@ import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
 import api from "../../api";
 import { Playlist, User } from "../../types";
-import { RootState } from "../store";
 
 interface PlaylistState {
   playlists: Array<Playlist>;

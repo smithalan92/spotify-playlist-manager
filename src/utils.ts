@@ -3,6 +3,7 @@ import axios from "axios";
 import api from "./api";
 import { setUpdateState } from "./store/slices/tracks";
 import { store } from "./store/store";
+import { Playlist } from "./types";
 
 function delay(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -32,14 +33,15 @@ export function shuffleArray<T>(items: Array<T>): Array<T> {
 export async function saveShuffledPlaylist(
   originalList: Array<string>,
   shuffledList: Array<string>,
-  playlistId: string
+  playlist: Playlist
 ) {
   // Maintain a copy of the area so we're always reordering correctly
   // If we used the original array, the order would be wrong after the update
   const currentOrder = [...originalList];
-  let currentSnapshotId = "";
   let processedTracks = 0;
   const totalTracks = shuffledList.length;
+  const { id: playlistId, snapshotId: originalSnapshotId } = playlist;
+  let currentSnapshotId = originalSnapshotId;
 
   for (let index = 0; index < shuffledList.length; index++) {
     const currentTrackIndex = currentOrder.findIndex(

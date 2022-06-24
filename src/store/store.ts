@@ -19,12 +19,12 @@ export const store = configureStore({
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(
       save({
-        states: ["auth", "playlist"], // Make sure you are loading / saving the slice
+        states: ["auth"], // Make sure you are loading / saving the slice
         namespace: "spotify_placelist_manager",
       })
     ),
   preloadedState: load({
-    states: ["auth", "playlist"],
+    states: ["auth"],
     namespace: "spotify_placelist_manager",
   }),
 });

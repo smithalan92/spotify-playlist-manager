@@ -64,7 +64,7 @@ function Playlist() {
   const onClickSave = async () => {
     const originalOrder = originalTracks!.map((track) => track!.uri);
     const shuffledOrder = shuffledTracks!.map((track) => track!.uri);
-    await saveShuffledPlaylist(originalOrder, shuffledOrder, playlist!.id);
+    await saveShuffledPlaylist(originalOrder, shuffledOrder, playlist!);
   };
 
   function goToPlaylists() {
@@ -100,16 +100,6 @@ function Playlist() {
         originalTracks={originalTracks}
         shuffledTracks={shuffledTracks}
       />
-    );
-  }
-
-  function renderTrackUpdateView() {
-    return (
-      <div className="absolute top-0 left-0 w-full h-full bg-black/40 z-10">
-        <div className="w-full h-full flex flex-col items-center justify-center">
-          <div className="w-100 bg-spotify-green/50">Updating</div>
-        </div>
-      </div>
     );
   }
 

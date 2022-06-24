@@ -107,12 +107,7 @@ async function getPlaylistTracks(
         },
       });
 
-    tracks = [
-      ...tracks,
-      ...data.items
-        .filter((track) => !track.is_local)
-        .map((track) => track.track),
-    ];
+    tracks = [...tracks, ...data.items.map((track) => track.track)];
 
     if (data.next !== null) {
       offset += tracks.length;
@@ -133,22 +128,21 @@ async function updatePlaylistTrackPosition({
   playlistId: string;
   currentPosition: number;
   newPosition: number;
-  snapshotId: string | undefined;
+  snapshotId: string;
 }) {
   const auth = getAuthHeader();
 
   const payload: {
     range_start: number;
     insert_before: number;
-    snapshot_id?: string;
+    snapshot_id: string;
+    range_length: 1;
   } = {
     range_start: currentPosition,
     insert_before: newPosition,
+    snapshot_id: snapshotId,
+    range_length: 1,
   };
-
-  if (snapshotId) {
-    payload["snapshot_id"] = snapshotId;
-  }
 
   const { data } = await axios.put(
     `${SPOTIFY_API_URL}playlists/${playlistId}/tracks`,

@@ -49,7 +49,6 @@ export const trackSlice = createSlice({
   initialState,
   reducers: {
     setUpdateState: (state, action: PayloadAction<TrackUpdateState | null>) => {
-      console.log("Setting update state: ", action.payload);
       state.updateState = action.payload;
     },
   },
