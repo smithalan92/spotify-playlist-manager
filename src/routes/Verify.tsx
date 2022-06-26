@@ -1,33 +1,68 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 
+import { ReactComponent as Spinner } from "../assets/spinner.svg";
 import api from "../api";
-import { setToken } from "../store/slices/auth";
-import { RootState } from "../store/store";
+import { selectStateKey, setToken } from "../store/slices/auth";
+import { useAppSelector } from "../store/store";
 
 function Verify() {
   const [searchParams] = useSearchParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  // const stateKey = useSelector((state: RootState) => state.auth.stateKey);
+  const stateKey = useAppSelector(selectStateKey);
 
   const code = searchParams.get("code");
-  // const state = searchParams.get("state");
+  const state = searchParams.get("state");
 
-  // TODO handle code & state missing
+  const [hasError, setHasError] = useState(false);
 
   useEffect(() => {
+    if (!code || state !== stateKey) {
+      setHasError(true);
+    }
+
     const getToken = async () => {
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      const token = await api.getToken(code!);
-      dispatch(setToken(token));
-      navigate("/playlists");
+      try {
+        const token = await api.getToken(code!);
+        await dispatch(setToken(token));
+        navigate("/playlists");
+      } catch (err) {
+        setHasError(true);
+        throw err;
+      }
     };
     getToken();
   }, []);
 
-  return <div>Loading...</div>;
+  const renderLoading = () => {
+    return (
+      <>
+        <Spinner className="w-16 stroke-green" />
+        <span className="text-lg font-bold mt-8">Loading...</span>
+      </>
+    );
+  };
+
+  const renderError = () => {
+    return (
+      <>
+        <span className="text-md font-bold text-red-600">
+          Something went wrong with the authorisation.
+        </span>
+        <Link to="/login" className="mt-8 hover:underline">
+          Try again
+        </Link>
+      </>
+    );
+  };
+
+  return (
+    <div className="w-full h-full flex flex-col items-center justify-center">
+      {hasError ? renderError() : renderLoading()}
+    </div>
+  );
 }
 
 export default Verify;

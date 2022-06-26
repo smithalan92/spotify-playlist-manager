@@ -8,7 +8,7 @@ import TabbedTrackLists from "../components/TabbedTrackLists";
 import Tracklist from "../components/Tracklist";
 import LoadingOverlay from "../components/LoadingOverlay";
 import { RootState, useAppSelector } from "../store/store";
-import { saveShuffledPlaylist, shuffleArray } from "../utils";
+import { shuffleArray } from "../utils";
 import { ReactComponent as Spinner } from "../assets/spinner.svg";
 import { setAudio } from "../store/slices/audio";
 import {
@@ -19,7 +19,7 @@ import {
   setShuffledTracksForPlaylist,
   saveShuffledTracks,
 } from "../store/slices/tracks";
-import { useAppDispatch } from "../store/hooks";
+import { useAppDispatch } from "../store/store";
 
 // TODO - Handle UI for playlist with 0 tracks
 function Playlist() {

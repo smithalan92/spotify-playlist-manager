@@ -1,4 +1,9 @@
-import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import {
+  PayloadAction,
+  createAsyncThunk,
+  createSlice,
+  createSelector,
+} from "@reduxjs/toolkit";
 
 import api from "../../api";
 import { User } from "../../types";
@@ -34,6 +39,9 @@ export const authSlice = createSlice({
     setStateKey: (state, action: PayloadAction<string>) => {
       state.stateKey = action.payload;
     },
+    resetState: (state) => {
+      Object.assign(state, { ...initialState });
+    },
   },
   extraReducers: (builder) => {
     // Add reducers for additional action types here, and handle loading state as needed
@@ -47,8 +55,18 @@ export const authSlice = createSlice({
   },
 });
 
-export const selectIsAuthed = (state: RootState) => state.auth.token.length > 0;
+const selectAuthState = (state: RootState) => state.auth;
 
-export const { setUser, setToken, setStateKey } = authSlice.actions;
+export const selectIsAuthed = createSelector(
+  [selectAuthState],
+  (auth) => auth.token.length > 0
+);
+
+export const selectStateKey = createSelector(
+  [selectAuthState],
+  (auth) => auth.stateKey
+);
+
+export const { setUser, setToken, setStateKey, resetState } = authSlice.actions;
 
 export default authSlice.reducer;

@@ -18,7 +18,7 @@ function Login() {
   return (
     <div className="flex flex-col items-center justify-center w-full h-full">
       <div className="relative">
-        <SpotifyLogo className="w-96 pb-1" />
+        <SpotifyLogo className="w-80 pb-1" />
         <div className="absolute bottom-0 right-0 text-spotify-green font-bold">
           Playlist manager
         </div>
