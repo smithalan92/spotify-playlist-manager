@@ -30,9 +30,18 @@ export function shuffleArray<T>(items: Array<T>): Array<T> {
   return itemsCopy;
 }
 
+function logTracks(
+  a: SpotifyApi.TrackObjectFull[],
+  b: SpotifyApi.TrackObjectFull[]
+) {
+  console.log(a.map((t) => t.name));
+  console.log(b.map((t) => t.name));
+  console.log("###");
+}
+
 export async function saveShuffledPlaylist(
-  originalList: Array<string>,
-  shuffledList: Array<string>,
+  originalList: Array<SpotifyApi.TrackObjectFull>,
+  shuffledList: Array<SpotifyApi.TrackObjectFull>,
   playlist: Playlist
 ) {
   // Maintain a copy of the area so we're always reordering correctly
@@ -43,9 +52,10 @@ export async function saveShuffledPlaylist(
   const { id: playlistId, snapshotId: originalSnapshotId } = playlist;
   let currentSnapshotId = originalSnapshotId;
 
-  for (let index = 0; index < shuffledList.length; index++) {
+  for (const [index, shuffledItem] of shuffledList.entries()) {
+    logTracks(currentOrder, shuffledList);
     const currentTrackIndex = currentOrder.findIndex(
-      (item) => item === shuffledList[index]
+      (item) => item.uri === shuffledItem.uri
     );
     if (currentTrackIndex === index) {
       processedTracks += 1;

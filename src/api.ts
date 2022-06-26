@@ -88,12 +88,12 @@ async function getPlaylists(): Promise<
 
 async function getPlaylistTracks(
   id: string | undefined
-): Promise<Array<SpotifyApi.TrackObjectFull | null>> {
+): Promise<Array<SpotifyApi.TrackObjectFull>> {
   const auth = getAuthHeader();
 
   let offset = 0;
   let hasMore = true;
-  let tracks: Array<SpotifyApi.TrackObjectFull | null> = [];
+  let tracks: Array<SpotifyApi.TrackObjectFull> = [];
 
   while (hasMore) {
     const { data }: { data: SpotifyApi.PlaylistTrackResponse } =
@@ -107,7 +107,7 @@ async function getPlaylistTracks(
         },
       });
 
-    tracks = [...tracks, ...data.items.map((track) => track.track)];
+    tracks = [...tracks, ...data.items.map(({ track }) => track!)];
 
     if (data.next !== null) {
       offset += tracks.length;

@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { useWindowSize } from "react-use";
 
-import api from "../api";
 import AudioPlayer from "../components/AudioPlayer";
 import TabbedTrackLists from "../components/TabbedTrackLists";
 import Tracklist from "../components/Tracklist";
@@ -12,15 +11,29 @@ import { RootState, useAppSelector } from "../store/store";
 import { saveShuffledPlaylist, shuffleArray } from "../utils";
 import { ReactComponent as Spinner } from "../assets/spinner.svg";
 import { setAudio } from "../store/slices/audio";
-import { selectTrackUpdateState } from "../store/slices/tracks";
+import {
+  selectTrackUpdateState,
+  selectOriginalTracksForPlaylist,
+  selectShuffledTracksForPlaylist,
+  loadTracksForPlaylist,
+  setShuffledTracksForPlaylist,
+} from "../store/slices/tracks";
+import { useAppDispatch } from "../store/hooks";
 
 function Playlist() {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   const trackUpdateState = useAppSelector(selectTrackUpdateState);
 
   const { id: playlistId } = useParams<{ id: string }>();
+  const originalTracks = useAppSelector(
+    selectOriginalTracksForPlaylist(playlistId!)
+  );
+  const shuffledTracks = useAppSelector(
+    selectShuffledTracksForPlaylist(playlistId!)
+  );
+
   const playlist = useSelector((state: RootState) => {
     return state.playlist.playlists.find(
       (playlist) => playlist.id === playlistId
@@ -28,22 +41,12 @@ function Playlist() {
   });
 
   const [isLoading, setIsLoading] = useState(true);
-  const [originalTracks, setOrigialTracks] = useState<
-    Array<SpotifyApi.TrackObjectFull | null>
-  >([]);
-  const [shuffledTracks, setShuffledTracks] = useState<
-    Array<SpotifyApi.TrackObjectFull | null>
-  >([]);
 
   const { width } = useWindowSize();
 
   useEffect(() => {
     const loadTracks = async () => {
-      const tracks = await api.getPlaylistTracks(playlistId);
-      setOrigialTracks(tracks);
-      setShuffledTracks(
-        shuffleArray<SpotifyApi.TrackObjectFull | null>(tracks)
-      );
+      await dispatch(loadTracksForPlaylist(playlistId!));
       setIsLoading(false);
     };
     loadTracks();
@@ -56,15 +59,16 @@ function Playlist() {
   }, []);
 
   const shuffleTracks = () => {
-    setShuffledTracks(
-      shuffleArray<SpotifyApi.TrackObjectFull | null>(shuffledTracks)
+    dispatch(
+      setShuffledTracksForPlaylist({
+        playlistId: playlistId!,
+        tracks: shuffleArray<SpotifyApi.TrackObjectFull>(shuffledTracks),
+      })
     );
   };
 
   const onClickSave = async () => {
-    const originalOrder = originalTracks!.map((track) => track!.uri);
-    const shuffledOrder = shuffledTracks!.map((track) => track!.uri);
-    await saveShuffledPlaylist(originalOrder, shuffledOrder, playlist!);
+    await saveShuffledPlaylist(originalTracks, shuffledTracks, playlist!);
   };
 
   function goToPlaylists() {
