@@ -1,11 +1,4 @@
-import axios from "axios";
-
-import api from "./api";
-import { setUpdateState } from "./store/slices/tracks";
-import { store } from "./store/store";
-import { Playlist } from "./types";
-
-function delay(ms: number) {
+export function delay(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
@@ -28,80 +21,4 @@ export function shuffleArray<T>(items: Array<T>): Array<T> {
   }
 
   return itemsCopy;
-}
-
-function logTracks(
-  a: SpotifyApi.TrackObjectFull[],
-  b: SpotifyApi.TrackObjectFull[]
-) {
-  console.log(a.map((t) => t.name));
-  console.log(b.map((t) => t.name));
-  console.log("###");
-}
-
-export async function saveShuffledPlaylist(
-  originalList: Array<SpotifyApi.TrackObjectFull>,
-  shuffledList: Array<SpotifyApi.TrackObjectFull>,
-  playlist: Playlist
-) {
-  // Maintain a copy of the area so we're always reordering correctly
-  // If we used the original array, the order would be wrong after the update
-  const currentOrder = [...originalList];
-  let processedTracks = 0;
-  const totalTracks = shuffledList.length;
-  const { id: playlistId, snapshotId: originalSnapshotId } = playlist;
-  let currentSnapshotId = originalSnapshotId;
-
-  for (const [index, shuffledItem] of shuffledList.entries()) {
-    logTracks(currentOrder, shuffledList);
-    const currentTrackIndex = currentOrder.findIndex(
-      (item) => item.uri === shuffledItem.uri
-    );
-    if (currentTrackIndex === index) {
-      processedTracks += 1;
-      await store.dispatch(
-        setUpdateState({
-          processed: processedTracks,
-          total: totalTracks,
-        })
-      );
-
-      continue;
-    }
-
-    const makeApiCall = async (): Promise<string> => {
-      return api.updatePlaylistTrackPosition({
-        playlistId,
-        currentPosition: currentTrackIndex,
-        newPosition: index === shuffledList.length ? index + 1 : index,
-        snapshotId: currentSnapshotId,
-      });
-    };
-
-    try {
-      currentSnapshotId = await makeApiCall();
-      processedTracks += 1;
-      await store.dispatch(
-        setUpdateState({
-          processed: processedTracks,
-          total: totalTracks,
-        })
-      );
-    } catch (err) {
-      if (axios.isAxiosError(err)) {
-        if (err.response?.status === 429) {
-          const timeout =
-            parseInt(err.response.headers["Retry-After"], 10) ?? 5;
-          console.log("Backoff timeout");
-          await delay(timeout * 1000);
-          await makeApiCall();
-        }
-      }
-    }
-
-    currentOrder.splice(currentTrackIndex, 1);
-    currentOrder.splice(index, 0, shuffledList[index]);
-  }
-
-  store.dispatch(setUpdateState(null));
 }

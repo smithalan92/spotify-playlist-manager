@@ -55,9 +55,9 @@ export const playlistsSlice = createSlice({
               id: playlist.id,
               href: playlist.href,
               image: {
-                height: playlist.images[0].height,
-                width: playlist.images[0].width,
-                url: playlist.images[0].url,
+                height: playlist.images[0]?.height ?? 0,
+                width: playlist.images[0]?.width ?? 0,
+                url: playlist.images[0]?.url ?? "",
               },
               name: playlist.name,
               trackCount: playlist.tracks.total,

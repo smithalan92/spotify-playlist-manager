@@ -17,9 +17,11 @@ import {
   selectShuffledTracksForPlaylist,
   loadTracksForPlaylist,
   setShuffledTracksForPlaylist,
+  saveShuffledTracks,
 } from "../store/slices/tracks";
 import { useAppDispatch } from "../store/hooks";
 
+// TODO - Handle UI for playlist with 0 tracks
 function Playlist() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
@@ -68,7 +70,7 @@ function Playlist() {
   };
 
   const onClickSave = async () => {
-    await saveShuffledPlaylist(originalTracks, shuffledTracks, playlist!);
+    await dispatch(saveShuffledTracks(playlistId!));
   };
 
   function goToPlaylists() {

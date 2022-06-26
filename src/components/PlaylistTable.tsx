@@ -1,5 +1,5 @@
 import { Playlist } from "../types";
-import PlaylistTableItem from "./PlaylistTableItemAlt";
+import PlaylistTableItem from "./PlaylistTableItem";
 
 function PlaylistTable({ playlists }: { playlists: Playlist[] }) {
   return (

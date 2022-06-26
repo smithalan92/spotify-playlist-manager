@@ -13,14 +13,9 @@ function Home() {
   const playlists = useSelector((state: RootState) => state.playlist.playlists);
 
   useEffect(() => {
-    // TODO - Always update playlists
-    if (!playlists.length) {
-      dispatch(fetchUser()).then(() => {
-        dispatch(fetchPlaylists());
-      });
-    } else {
-      dispatch(setLoading(false));
-    }
+    dispatch(fetchUser()).then(() => {
+      dispatch(fetchPlaylists());
+    });
   }, []);
 
   const renderLoadingState = () => {

@@ -4,8 +4,9 @@ import {
   createSlice,
   createSelector,
 } from "@reduxjs/toolkit";
+import axios from "axios";
 import api from "../../api";
-import { shuffleArray } from "../../utils";
+import { delay, shuffleArray } from "../../utils";
 import { RootState } from "../store";
 
 interface PlaylistObject {
@@ -53,6 +54,76 @@ export const loadTracksForPlaylist = createAsyncThunk(
   }
 );
 
+export const saveShuffledTracks = createAsyncThunk(
+  "tracks/saveShuffledTracks",
+  async (playlistId: string, thunkApi): Promise<string> => {
+    const state = <RootState>thunkApi.getState();
+    const { originalTracks, shuffledTracks } =
+      state.tracks.playlists[playlistId];
+
+    const currentOrder = [...originalTracks.map((t) => t.uri)];
+    const shuffled = shuffledTracks.map((t) => t.uri);
+
+    let processedTracks = 0;
+    const totalTracks = shuffled.length;
+    let currentSnapshotId: string | undefined = undefined;
+
+    for (const [index, shuffledItem] of shuffled.entries()) {
+      const currentTrackIndex = currentOrder.findIndex(
+        (item) => item === shuffledItem
+      );
+      if (currentTrackIndex === index) {
+        processedTracks += 1;
+        await thunkApi.dispatch(
+          setUpdateState({
+            processed: processedTracks,
+            total: totalTracks,
+          })
+        );
+
+        continue;
+      }
+
+      const makeApiCall = async (): Promise<string> => {
+        return api.updatePlaylistTrackPosition({
+          playlistId,
+          currentPosition: currentTrackIndex,
+          newPosition: index === shuffled.length ? index + 1 : index,
+          snapshotId: currentSnapshotId,
+        });
+      };
+
+      try {
+        currentSnapshotId = await makeApiCall();
+        processedTracks += 1;
+        await thunkApi.dispatch(
+          setUpdateState({
+            processed: processedTracks,
+            total: totalTracks,
+          })
+        );
+      } catch (err) {
+        if (axios.isAxiosError(err)) {
+          if (err.response?.status === 429) {
+            const timeout =
+              parseInt(err.response.headers["Retry-After"], 10) ?? 5;
+            console.log("Backoff timeout");
+            await delay(timeout * 1000);
+            await makeApiCall();
+          }
+        }
+      }
+
+      currentOrder.splice(currentTrackIndex, 1);
+      currentOrder.splice(index, 0, shuffled[index]);
+    }
+
+    thunkApi.dispatch(setUpdateState(null));
+
+    return playlistId;
+  }
+);
+
 export const trackSlice = createSlice({
   name: "tracks",
   initialState,
@@ -84,6 +155,20 @@ export const trackSlice = createSlice({
           [playlistId]: {
             originalTracks: tracks,
             shuffledTracks: shuffleArray(tracks),
+          },
+        };
+      }
+    );
+    builder.addCase(
+      saveShuffledTracks.fulfilled,
+      (state, action: PayloadAction<string>) => {
+        const playListId = action.payload;
+        const tracks = state.playlists[playListId].shuffledTracks;
+        state.playlists = {
+          ...state.playlists,
+          [playListId]: {
+            originalTracks: tracks,
+            shuffledTracks: tracks,
           },
         };
       }
