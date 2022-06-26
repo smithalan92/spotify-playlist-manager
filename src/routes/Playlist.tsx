@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { useWindowSize } from "react-use";
@@ -45,6 +45,13 @@ function Playlist() {
   const [isLoading, setIsLoading] = useState(true);
 
   const { width } = useWindowSize();
+
+  const canSaveChanges = useMemo(() => {
+    return (
+      originalTracks.map((a) => a.id).join(".") !==
+      shuffledTracks.map((a) => a.id).join(".")
+    );
+  }, [originalTracks, shuffledTracks]);
 
   useEffect(() => {
     const loadTracks = async () => {
@@ -127,8 +134,9 @@ function Playlist() {
             Shuffle
           </button>
           <button
-            className="mt-1 ml-2 inline-block px-12 py-2 text-sm font-medium text-white bg-green-600 border border-green-600 rounded active:text-green-500 hover:bg-transparent hover:text-green-600 focus:outline-none focus:ring"
+            className="mt-1 ml-2 inline-block px-12 py-2 text-sm font-medium text-white bg-green-600 border border-green-600 rounded active:text-green-500 hover:bg-transparent hover:text-green-600 focus:outline-none focus:ring disabled:bg-gray-300 disabled:text-white disabled:border-none"
             onClick={onClickSave}
+            disabled={!canSaveChanges}
           >
             Save
           </button>
