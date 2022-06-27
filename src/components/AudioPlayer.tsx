@@ -5,7 +5,6 @@ import { useSelector } from "react-redux";
 import { setAudio } from "../store/slices/audio";
 import { RootState } from "../store/store";
 
-// TODO - Figure out what to do when track finishes playing
 function AudioPlayer() {
   const trackUrl = useSelector((state: RootState) => state.audio.url);
   const audioRef = useRef<HTMLAudioElement>(null);

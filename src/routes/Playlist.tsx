@@ -21,7 +21,6 @@ import {
 } from "../store/slices/tracks";
 import { useAppDispatch } from "../store/store";
 
-// TODO - Handle UI for playlist with 0 tracks
 function Playlist() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
@@ -116,6 +115,24 @@ function Playlist() {
     );
   }
 
+  function renderEmptyState() {
+    return (
+      <div className="flex flex-col items-center">
+        <span className="text-md text-bold mt-16 text-center p-4">
+          No tracks have been added to this playlist.
+        </span>
+        <a
+          href={`https://open.spotify.com/playlist/${playlist?.id}`}
+          target="_blank"
+          rel="noreferrer"
+          className="focus:outline-none text-white bg-spotify-green hover:bg-green-400 font-bold rounded-lg text-sm px-5 py-2.5 mr-2 mb-2"
+        >
+          Go to Spotify
+        </a>
+      </div>
+    );
+  }
+
   function renderContent() {
     return (
       <div className="flex flex-col items-center">
@@ -153,12 +170,24 @@ function Playlist() {
     return <></>;
   };
 
+  function renderPage() {
+    if (isLoading) {
+      return renderLoadingState();
+    }
+
+    if (originalTracks.length === 0) {
+      return renderEmptyState();
+    }
+
+    return renderContent();
+  }
+
   return (
     <div className="flex flex-col w-full h-full items-center">
       {maybeRenderLoadingOverlay()}
       <span className="font-bold text-lg">{playlist?.name} Playlist</span>
       <span className="text-sm">{originalTracks.length} tracks</span>
-      {isLoading ? renderLoadingState() : renderContent()}
+      {renderPage()}
       <div className="absolute bottom-0">
         <AudioPlayer />
       </div>

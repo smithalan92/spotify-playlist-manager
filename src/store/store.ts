@@ -7,8 +7,6 @@ import authReducer from "./slices/auth";
 import playlistReducer from "./slices/playlist";
 import tracksReducer from "./slices/tracks";
 
-// TODO - Dont save/load playlists to localstorage
-
 export const store = configureStore({
   reducer: {
     auth: authReducer,

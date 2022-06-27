@@ -110,7 +110,7 @@ async function getPlaylistTracks(
     tracks = [...tracks, ...data.items.map(({ track }) => track!)];
 
     if (data.next !== null) {
-      offset += tracks.length;
+      offset += data.items.length;
     } else {
       hasMore = false;
     }
