@@ -34,7 +34,7 @@ function TabbedTrackLists(props: Props) {
   };
 
   return (
-    <div className="w-80 mt-4">
+    <div className="w-full mt-4" style={{ minWidth: "320px" }}>
       <ul className="flex text-center border-b border-gray-200 w-full">
         <li className="flex-1">
           <a

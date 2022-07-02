@@ -136,7 +136,7 @@ function Playlist() {
   function renderContent() {
     return (
       <div className="flex flex-col items-center">
-        {width > 825 ? renderSideBySideTracks() : renderTabbedTracks()}
+        {width > 650 ? renderSideBySideTracks() : renderTabbedTracks()}
         <div className="flex justify-center mt-8 flex-wrap">
           <button
             className="mt-1 inline-block px-12 py-2 text-sm font-medium text-white bg-green-600 border border-green-600 rounded active:text-green-500 hover:bg-transparent hover:text-green-600 focus:outline-none focus:ring"
