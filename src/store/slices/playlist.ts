@@ -1,7 +1,13 @@
-import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import {
+  PayloadAction,
+  createAsyncThunk,
+  createSlice,
+  createSelector,
+} from "@reduxjs/toolkit";
 
 import api from "../../api";
 import { Playlist, User } from "../../types";
+import { RootState, useAppSelector } from "../store";
 
 interface PlaylistState {
   playlists: Array<Playlist>;
@@ -71,5 +77,17 @@ export const playlistsSlice = createSlice({
 });
 
 export const { setLoading } = playlistsSlice.actions;
+
+const selectPlaylistState = (state: RootState) => state.playlist;
+
+export const getPlaylists = () =>
+  useAppSelector(
+    createSelector([selectPlaylistState], (state) => state.playlists)
+  );
+
+export const getIsLoading = () =>
+  useAppSelector(
+    createSelector([selectPlaylistState], (state) => state.loading)
+  );
 
 export default playlistsSlice.reducer;

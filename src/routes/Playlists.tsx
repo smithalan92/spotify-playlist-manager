@@ -1,16 +1,20 @@
 import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { Link } from "react-router-dom";
 
-import PlaylistTable from "../components/PlaylistTable";
 import { fetchUser } from "../store/slices/auth";
-import { fetchPlaylists, setLoading } from "../store/slices/playlist";
-import { AppDispatch, RootState } from "../store/store";
+import {
+  fetchPlaylists,
+  getIsLoading,
+  getPlaylists,
+} from "../store/slices/playlist";
+import { useAppDispatch } from "../store/store";
 import { ReactComponent as Spinner } from "../assets/spinner.svg";
+import { Playlist } from "../types";
 
 function Home() {
-  const dispatch = useDispatch<AppDispatch>();
-  const isLoading = useSelector((state: RootState) => state.playlist.loading);
-  const playlists = useSelector((state: RootState) => state.playlist.playlists);
+  const dispatch = useAppDispatch();
+  const isLoading = getIsLoading();
+  const playlists = getPlaylists();
 
   useEffect(() => {
     dispatch(fetchUser()).then(() => {
@@ -27,9 +31,25 @@ function Home() {
   };
 
   const renderPlaylists = () => {
+    const renderPlaylist = (playlist: Playlist) => {
+      return (
+        <Link
+          key={playlist.id}
+          to={`/playlist/${playlist.id}`}
+          className={`relative block overflow-hidden bg-center bg-no-repeat bg-cover rounded-xl w-56 h-56 m-2`}
+          style={{ backgroundImage: `url(${playlist.image.url})` }}
+        >
+          <div className="p-4 absolute bottom-0 text-white bg-black bg-opacity-70 w-full text-center">
+            <h5 className="text-md font-bold line-clamp-1">{playlist.name}</h5>
+            <p className="text-xs">Tracks: {playlist.trackCount}</p>
+          </div>
+        </Link>
+      );
+    };
+
     return (
-      <div className="flex flex-col">
-        <PlaylistTable playlists={playlists} />
+      <div className="flex mt-6 flex-wrap justify-center">
+        {playlists.map((playlist) => renderPlaylist(playlist))}
       </div>
     );
   };
