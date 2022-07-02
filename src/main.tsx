@@ -1,3 +1,5 @@
+/// <reference types="vite-plugin-svgr/client" />
+
 import ReactDOM from "react-dom/client";
 import { Provider } from "react-redux";
 
